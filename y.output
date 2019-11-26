@@ -1,0 +1,212 @@
+   0  $accept : program $end
+
+   1  program : line
+   2          | program line
+
+   3  line : expression CR
+
+   4  expression : term
+   5             | expression ADD term
+   6             | expression SUB term
+
+   7  term : primary_expression
+   8       | term MUL primary_expression
+   9       | term DIV primary_expression
+
+  10  primary_expression : DOUBLE_LITERAL
+  11                     | LP expression RP
+
+state 0
+	$accept : . program $end  (0)
+
+	DOUBLE_LITERAL  shift 1
+	LP  shift 2
+	.  error
+
+	program  goto 3
+	expression  goto 4
+	term  goto 5
+	primary_expression  goto 6
+	line  goto 7
+
+
+state 1
+	primary_expression : DOUBLE_LITERAL .  (10)
+
+	.  reduce 10
+
+
+state 2
+	primary_expression : LP . expression RP  (11)
+
+	DOUBLE_LITERAL  shift 1
+	LP  shift 2
+	.  error
+
+	expression  goto 8
+	term  goto 5
+	primary_expression  goto 6
+
+
+state 3
+	$accept : program . $end  (0)
+	program : program . line  (2)
+
+	$end  accept
+	DOUBLE_LITERAL  shift 1
+	LP  shift 2
+	.  error
+
+	expression  goto 4
+	term  goto 5
+	primary_expression  goto 6
+	line  goto 9
+
+
+state 4
+	line : expression . CR  (3)
+	expression : expression . ADD term  (5)
+	expression : expression . SUB term  (6)
+
+	ADD  shift 10
+	SUB  shift 11
+	CR  shift 12
+	.  error
+
+
+state 5
+	expression : term .  (4)
+	term : term . MUL primary_expression  (8)
+	term : term . DIV primary_expression  (9)
+
+	MUL  shift 13
+	DIV  shift 14
+	ADD  reduce 4
+	SUB  reduce 4
+	CR  reduce 4
+	RP  reduce 4
+
+
+state 6
+	term : primary_expression .  (7)
+
+	.  reduce 7
+
+
+state 7
+	program : line .  (1)
+
+	.  reduce 1
+
+
+state 8
+	expression : expression . ADD term  (5)
+	expression : expression . SUB term  (6)
+	primary_expression : LP expression . RP  (11)
+
+	ADD  shift 10
+	SUB  shift 11
+	RP  shift 15
+	.  error
+
+
+state 9
+	program : program line .  (2)
+
+	.  reduce 2
+
+
+state 10
+	expression : expression ADD . term  (5)
+
+	DOUBLE_LITERAL  shift 1
+	LP  shift 2
+	.  error
+
+	term  goto 16
+	primary_expression  goto 6
+
+
+state 11
+	expression : expression SUB . term  (6)
+
+	DOUBLE_LITERAL  shift 1
+	LP  shift 2
+	.  error
+
+	term  goto 17
+	primary_expression  goto 6
+
+
+state 12
+	line : expression CR .  (3)
+
+	.  reduce 3
+
+
+state 13
+	term : term MUL . primary_expression  (8)
+
+	DOUBLE_LITERAL  shift 1
+	LP  shift 2
+	.  error
+
+	primary_expression  goto 18
+
+
+state 14
+	term : term DIV . primary_expression  (9)
+
+	DOUBLE_LITERAL  shift 1
+	LP  shift 2
+	.  error
+
+	primary_expression  goto 19
+
+
+state 15
+	primary_expression : LP expression RP .  (11)
+
+	.  reduce 11
+
+
+state 16
+	expression : expression ADD term .  (5)
+	term : term . MUL primary_expression  (8)
+	term : term . DIV primary_expression  (9)
+
+	MUL  shift 13
+	DIV  shift 14
+	ADD  reduce 5
+	SUB  reduce 5
+	CR  reduce 5
+	RP  reduce 5
+
+
+state 17
+	expression : expression SUB term .  (6)
+	term : term . MUL primary_expression  (8)
+	term : term . DIV primary_expression  (9)
+
+	MUL  shift 13
+	DIV  shift 14
+	ADD  reduce 6
+	SUB  reduce 6
+	CR  reduce 6
+	RP  reduce 6
+
+
+state 18
+	term : term MUL primary_expression .  (8)
+
+	.  reduce 8
+
+
+state 19
+	term : term DIV primary_expression .  (9)
+
+	.  reduce 9
+
+
+10 terminals, 6 nonterminals
+12 grammar rules, 20 states
