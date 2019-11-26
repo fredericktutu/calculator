@@ -1,6 +1,6 @@
 # calculator
 ---
-## this is a calculator, which can execute add/sub/mul/div, and can also deal with parentheses.
+## this is a calculator, which can execute add/sub/mul/div, and also deal with parentheses.
 ## I wrote this by flex and yacc, and run it on WSL(ubuntu)
 ---
 ### how to use
